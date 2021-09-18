@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+
+		<arg name="datapath"	default="/home/robot/iri-lab/labrobotica/drivers/irilibbarrett/bin/Trajs/"/>
+		<arg name="datafile"	default="TrajWAMs/TrajWAM_8"/>
+
+    <node name="read_node"
+    			pkg="mpc_pkg"
+    			type="read_node"
+    			output="screen">
+    			<param name="datapath" value="$(arg datapath)"/>
+    			<param name="datafile" value="$(arg datafile)"/>
+
+    </node>
+
+</launch>
+

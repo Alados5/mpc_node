@@ -1,0 +1,12 @@
+float64[] xinicom_rot
+float64[] u_rot
+float64[] traj_left_x
+float64[] traj_left_y
+float64[] traj_left_z
+float64[] traj_right_x
+float64[] traj_right_y
+float64[] traj_right_z
+float64[] Rcloth_x
+float64[] Rcloth_y
+float64[] Rcloth_z
+float64[] u_bef

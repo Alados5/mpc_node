@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="node_start_delay1"  default="3.0"/>
+    <arg name="node_start_delay2"  default="20.0"/>
+    
+		<arg name="datapath"	default="/home/robot/iri-lab/labrobotica/drivers/irilibbarrett/bin/Trajs/"/>
+		<arg name="datafile"	default="TrajWAMs/TrajWAM_8"/>
+		
+		<include file="$(find iri_wam_controller)/launch/iri_wam_controller.launch" />
+		
+		<node name="activate_action"
+		      pkg="mpc_pkg"
+		      type="activate_action.sh"
+		      launch-prefix="bash -c 'sleep $(arg node_start_delay1); $0 $@' "/>
+
+    <node name="read_node"
+    			pkg="mpc_pkg"
+    			type="read_node"
+    			launch-prefix="bash -c 'sleep $(arg node_start_delay2); $0 $@' "
+    			output="screen">
+    			<param name="datapath" value="$(arg datapath)"/>
+    			<param name="datafile" value="$(arg datafile)"/>
+
+    </node>
+
+</launch>
+

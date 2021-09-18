@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="node_start_delay1"  default="5.0"/>
+    <arg name="node_start_delay2"  default="20.0"/>
+    <arg name="node_kill_delay"    default="40.0"/>
+    <arg name="node_start_delay3"  default="45.0"/>
+    
+		<arg name="datapath"	default="/home/robot/Desktop/ALuque/mpc_ros/src/mpc_node/data/"/>
+
+		<arg name="NTraj"		  default="10"/>
+		<arg name="nSOM"		  default="4"/>
+		<arg name="nCOM"		  default="4"/>
+		<arg name="Hp"			  default="25"/>
+		<arg name="Ts"			  default="0.02"/>
+		<arg name="Wv"				default="0.20"/>
+		
+		
+		
+		<!-- Launch vision node -->
+		<!--<include file="$(find cloth_segmentation)/launch/fast_cloth_segmentation.launch" /> -->
+		
+		
+		<!-- Launch Cartesian Controller, move home -->
+		<include file="$(find iri_wam_controller)/launch/iri_wam_controller.launch" />
+		
+		<node name="activate_action"
+		      pkg="mpc_pkg"
+		      type="activate_action.sh"
+		      launch-prefix="bash -c 'sleep $(arg node_start_delay1); $0 $@' "/>
+		      
+		      
+		<!-- Launch Calibration, SOM update, kill calibration after a while -->      
+    <node name="calibration"
+          pkg="mpc_vision"
+          type="calibration"
+          launch-prefix="bash -c 'sleep $(arg node_start_delay2); $0 $@' "
+          output="screen"/>
+    
+    <node name="update_som"
+          pkg="mpc_vision"
+          type="update_som"
+          launch-prefix="bash -c 'sleep $(arg node_start_delay2); $0 $@' "
+          output="screen">
+    </node>
+    
+		<node name="kill_calibration"
+		      pkg="mpc_vision"
+		      type="kill_calibration.sh"
+		      launch-prefix="bash -c 'sleep $(arg node_kill_delay); $0 $@' "/>
+		
+		
+		<!-- Launch RT CL and Optimizer nodes -->      
+    <node name="mpc_rt_node"
+    			pkg="mpc_pkg"
+    			type="mpc_rt_node"
+    			launch-prefix="bash -c 'sleep $(arg node_start_delay3); $0 $@' "
+    			output="screen">
+    			<param name="datapath" value="$(arg datapath)"/>
+    			<param name="NTraj" value="$(arg NTraj)"/>
+    			<param name="nSOM" value="$(arg nSOM)"/>
+    			<param name="nCOM" value="$(arg nCOM)"/>
+    			<param name="Hp" value="$(arg Hp)"/>
+    			<param name="Ts" value="$(arg Ts)"/>
+    			<param name="Wv" value="$(arg Wv)"/>
+    </node>
+    
+    <node name="mpc_opti_node"
+    			pkg="mpc_pkg"
+    			type="mpc_opti_node"
+    			launch-prefix="bash -c 'sleep $(arg node_start_delay3); $0 $@' "
+    			output="screen">
+    			<param name="datapath" value="$(arg datapath)"/>
+    			<param name="NTraj" value="$(arg NTraj)"/>
+    			<param name="nCOM" value="$(arg nCOM)"/>
+    			<param name="Hp" value="$(arg Hp)"/>
+    			<param name="Ts" value="$(arg Ts)"/>
+    </node>
+
+</launch>
+
